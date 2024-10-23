@@ -3,7 +3,7 @@ name: GitHub Actions Demo
 on:
   push:
     branches:
-      - main  # Déclenche la pipeline uniquement lors des pushes sur la branche "main"
+      - master  # Déclenche la pipeline uniquement lors des pushes sur la branche "main"
 
 jobs:
   build-and-deploy:
