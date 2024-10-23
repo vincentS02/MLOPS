@@ -23,7 +23,7 @@ jobs:
 
       # 5. Pousser l'image sur Docker Hub
       - name: Push Docker image to Docker Hub
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/app
+        run: docker push app
 
 
       # 6. Se connecter en SSH au serveur distant et pull la nouvelle image Docker
