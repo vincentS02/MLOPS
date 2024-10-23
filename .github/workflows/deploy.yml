@@ -18,13 +18,17 @@ jobs:
         run: docker compose build app
 
       #3. Tag l'image Docker
-      - name: Tag Docker image
-        run: docker tag app ${{ secrets.DOCKER_USERNAME }}/app:latest
+    #  - name: Tag Docker image
+     #   run: docker tag app ${{ secrets.DOCKER_USERNAME }}/app:latest
 
       # 4. Se connecter à Docker Hub
       - name: Docker login
         run: echo "${{ secrets.LOGIN_SECRET }}" | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
 
+      # 4.5 Build l'image Docker
+      - name: Build Docker image
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/app:latest .
+      
       # 5. Pousser l'image sur Docker Hub
       - name: Push Docker image to Docker Hub
         run: docker push ${{ secrets.DOCKER_USERNAME }}/app:latest
