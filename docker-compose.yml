@@ -1,7 +1,6 @@
 services:
   app:
     build: .
-    image: lce/monrepoondockerhub
     ports:
       - "3276:3276"
 

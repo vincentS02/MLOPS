@@ -23,7 +23,7 @@ jobs:
 
       # 5. Pousser l'image sur Docker Hub
       - name: Push Docker image to Docker Hub
-        run: docker push lce/monrepoondockerhub
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/app
 
 
       # 6. Se connecter en SSH au serveur distant et pull la nouvelle image Docker
