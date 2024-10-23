@@ -1,0 +1,40 @@
+name: GitHub Actions Demo
+
+on:
+  push:
+    branches:
+      - main  # Déclenche la pipeline uniquement lors des pushes sur la branche "main"
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Checkout du code source
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 2. Construire l'image Docker via docker-compose
+      - name: Build Docker image
+        run: docker compose build ml_model
+
+      # 3. Taguer l'image Docker
+      - name: Tag Docker image
+        run: docker tag ml_model lce/monrepoondockerhub
+
+      # 4. Se connecter à Docker Hub
+      - name: Docker login
+        run: echo "${{ secrets.LOGIN_SECRET }}" | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+
+      # 5. Pousser l'image sur Docker Hub
+      - name: Push Docker image to Docker Hub
+        run: docker push lce/monrepoondockerhub
+
+
+      # 6. Se connecter en SSH au serveur distant et pull la nouvelle image Docker
+      # Connexion SSH avec mot de passe
+      - name: SSH to server and deploy
+        run: |
+          sshpass -p "${{ secrets.VM_PASSWORD }}" ssh ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} -o StrictHostKeyChecking=no << 'EOF'
+            docker compose pull ml_model
+            docker compose up -d --force-recreate
+          EOF
