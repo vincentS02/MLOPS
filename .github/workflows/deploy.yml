@@ -15,11 +15,11 @@ jobs:
 
       # 2. Construire l'image Docker via docker-compose
       - name: Build Docker image
-        run: docker compose build ml_model
+        run: docker compose build app
 
       # 3. Taguer l'image Docker
       - name: Tag Docker image
-        run: docker tag ml_model lce/monrepoondockerhub
+        run: docker tag app lce/monrepoondockerhub
 
       # 4. Se connecter à Docker Hub
       - name: Docker login
@@ -35,6 +35,6 @@ jobs:
       - name: SSH to server and deploy
         run: |
           sshpass -p "${{ secrets.VM_PASSWORD }}" ssh ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} -o StrictHostKeyChecking=no << 'EOF'
-            docker compose pull ml_model
+            docker compose pull app
             docker compose up -d --force-recreate
           EOF
