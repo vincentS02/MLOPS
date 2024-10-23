@@ -6,7 +6,7 @@ on:
       - master  # Déclenche la pipeline uniquement lors des pushes sur la branche "main"
 
 jobs:
-  build-and-deploy:
+  build-and-deploy-model1:
     runs-on: ubuntu-latest
     steps:
       # 1. Checkout du code source
@@ -33,7 +33,6 @@ jobs:
       - name: Push Docker image to Docker Hub
         run: docker push ${{ secrets.DOCKER_USERNAME }}/app:latest
 
-
       # 6. Se connecter en SSH au serveur distant et pull la nouvelle image Docker
       # Connexion SSH avec mot de passe
       - name: SSH to server and deploy
@@ -42,4 +41,33 @@ jobs:
             docker compose pull ${{ secrets.DOCKER_USERNAME }}/app:latest
             docker compose up -d --force-recreate
             docker run -d --name app -p 3276:3276 ${{ secrets.DOCKER_USERNAME }}/app:latest
+          EOF
+
+  build-and-deploy-model2:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Checkout du code source
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Construire l'image Docker via docker-compose
+      - name: Build Docker image for model2
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/model2:latest -f Dockerfile.model2 .
+
+      # 3. Se connecter à Docker Hub
+      - name: Docker login
+        run: echo "${{ secrets.LOGIN_SECRET }}" | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+
+      # 4. Pousser l'image sur Docker Hub
+      - name: Push Docker image to Docker Hub
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/model2:latest
+
+      # 5. Se connecter en SSH au serveur distant et pull la nouvelle image Docker
+      # Connexion SSH avec mot de passe
+      - name: SSH to server and deploy
+        run: |
+          sshpass -p "${{ secrets.VM_PASSWORD }}" ssh ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} -o StrictHostKeyChecking=no << 'EOF'
+            docker compose pull ${{ secrets.DOCKER_USERNAME }}/model2:latest
+            docker compose up -d --force-recreate
+            docker run -d --name model2 -p 3277:3277 ${{ secrets.DOCKER_USERNAME }}/model2:latest
           EOF

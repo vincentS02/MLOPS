@@ -4,3 +4,10 @@ services:
     ports:
       - "3276:3276"
 
+  model2:
+    build:
+      context: .
+      dockerfile: Dockerfile.model2
+    ports:
+      - "3277:3277"
+

@@ -1,0 +1,9 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY . /app
+
+RUN pip install --no-cache-dir -r requirements.model2.txt
+EXPOSE 3277
+CMD ["uvicorn", "app_model2:app", "--host", "0.0.0.0", "--port", "3277"]
