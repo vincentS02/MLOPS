@@ -41,4 +41,5 @@ jobs:
           sshpass -p "${{ secrets.VM_PASSWORD }}" ssh ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} -o StrictHostKeyChecking=no << 'EOF'
             docker compose pull ${{ secrets.DOCKER_USERNAME }}/app:latest
             docker compose up -d --force-recreate
+            docker run -d --name app -p 3276:3276 ${{ secrets.DOCKER_USERNAME }}/app:latest
           EOF
